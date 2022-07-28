@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
 
                         try {
-                            Uri uri = Uri.parse("package:" + BuildConfig.APPLICATION_ID);
+                            Uri uri = Uri.parse("package:" + getBaseContext().getPackageName());
                             Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION, uri);
                             checkExternalStorageManagerLaunch.launch(intent);
                         } catch (Exception ex) {
@@ -168,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
                 arrayTotalizer[0] = new ItemTotalizer("Toal de itens", "3");
                 arrayTotalizer[1] = new ItemTotalizer("Toal de valor", "5000,00");
 
-                PdfReport report = PdfReport.init(MainActivity.this, BuildConfig.APPLICATION_ID, "android", Color.BLACK)
+                PdfReport report = PdfReport.init(MainActivity.this, "android", Color.BLACK)
                         .lineSeparator()
                         .imageIn("icon.jpg", Location.CENTER)
                         .lineSeparator(2)

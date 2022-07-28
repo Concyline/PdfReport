@@ -54,23 +54,18 @@ public class PdfReport {
     private boolean zebra = false;
     private String fileName = "default";
     private int borderColor = 0xFF000000;
-    private String pac;
 
-
-    PdfReport(Context context, String pac) {
+    PdfReport(Context context) {
         this.context = context;
-        this.pac = pac;
     }
 
-    PdfReport(Context context, String pac, String fileName) {
+    PdfReport(Context context, String fileName) {
         this.context = context;
-        this.pac = pac;
         this.fileName = fileName;
     }
 
-    PdfReport(Context context, String pac, String fileName, int borderColor) {
+    PdfReport(Context context, String fileName, int borderColor) {
         this.context = context;
-        this.pac = pac;
         this.fileName = fileName;
         this.borderColor = borderColor;
     }
@@ -85,42 +80,10 @@ public class PdfReport {
         PdfWriter.getInstance(document, output);
         document.open();
 
-        //document.add(getImage("profile.png"));
-        //document.add(new Paragraph("Teste paragrafo"));
-
-        //document.add(getLinhaSeparacao());
-        //document.add(new Paragraph("Teste paragrafo"));
-        //document.add(getLinhaSeparacao());
-
 
         for (Object o : lObject) {
             document.add((Element) o);
         }
-
-
-
- /*       PdfPTable header = new PdfPTable(new float[]{1f, 2.5f, 2.5f});
-
-        header.getDefaultCell().setBorder(0);
-
-        header.addCell(getImage("icon.jpg"));
-        header.addCell(getCellHeader("Razão social", "Siac sistemas"));
-        header.addCell(getCellHeader("Nome fantasia", "Siac fantasia"));
-        header.addCell(getCellHeader("Nome fantasia", "Siac fantasia"));*/
-
-        // COMEÇA A ESQUERDA SEM DISTRIBUI UNIFORMEMENTE ELEMENTOS
-        //header.setWidthPercentage(100);
-
-        // ESPAÇO APOS A TABELA
-        //header.setSpacingAfter(20);
-
-        // ESPAÇO ANTES A TABELA
-        //header.setSpacingBefore(20);
-
-        //document.add(header);
-
-
-        //document.add(new Paragraph("Teste paragrafo"));
 
         document.close();
 
@@ -523,60 +486,6 @@ public class PdfReport {
         return pdfPTable;
 
     }
-    
-    
-
-
-
-   /* private PdfPTable setHeaderImageIntern(String imageName, Location location, Border border, ItemCell[][] itemCells) throws Exception{
-
-        if(itemCells == null){
-            throw new Exception("itemCells is empty!");
-        }
-
-        float[] celLayout;
-
-        switch (location) {
-            case RIGTH: {
-                celLayout = new float[]{5f, 1f};
-                break;
-            }
-            default: {
-                celLayout = new float[]{1f, 5f};
-            }
-        }
-
-        PdfPTable headerImagePdfPTable = new PdfPTable(celLayout);
-        headerImagePdfPTable.getDefaultCell().setBorderColor(new BaseColor(borderColor));
-
-        if(border.equals(Border.NO)) {
-            headerImagePdfPTable.getDefaultCell().setBorder(0);
-        }
-
-        headerImagePdfPTable.setWidthPercentage(100);
-        headerImagePdfPTable.setSpacingBefore(10);
-        headerImagePdfPTable.setSpacingAfter(10);
-
-
-
-        PdfPTable headerInterno = new PdfPTable(2);
-        headerInterno.addCell(getCellHeader("Razão social", "capaPedido.getFvPedido())"));
-        headerInterno.addCell(getCellHeader("Razão social", "capaPedido.getFvPedido())"));
-
-        headerInterno.addCell(getCellHeader("Razão social", "capaPedido.getFvPedido())"));
-        headerInterno.addCell(getCellHeader("Razão social", "capaPedido.getFvPedido())"));
-
-        if(location.equals(Location.LEFT)){
-            headerImagePdfPTable.addCell(getImage(imageName));
-            headerImagePdfPTable.addCell(headerInterno);
-        }else{
-            headerImagePdfPTable.addCell(headerInterno);
-            headerImagePdfPTable.addCell(getImage(imageName));
-        }
-
-        return headerImagePdfPTable;
-
-    }*/
 
 
     public File createFile() throws Exception {
@@ -611,7 +520,7 @@ public class PdfReport {
         Uri uri = null;
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            uri = FileProvider.getUriForFile(Objects.requireNonNull(context), pac+".provider", pdfFile);
+            uri = FileProvider.getUriForFile(Objects.requireNonNull(context), context.getPackageName()+".provider", pdfFile);
 
             intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
@@ -633,7 +542,7 @@ public class PdfReport {
         Uri uri = null;
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            uri = FileProvider.getUriForFile(Objects.requireNonNull(context), pac+".provider", pdfFile);
+            uri = FileProvider.getUriForFile(Objects.requireNonNull(context), context.getPackageName()+".provider", pdfFile);
 
             intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
@@ -646,16 +555,16 @@ public class PdfReport {
     }
 
 
-    public static PdfReport init(Context context, String pac) {
-        return new PdfReport(context, pac);
+    public static PdfReport init(Context context) {
+        return new PdfReport(context);
     }
 
-    public static PdfReport init(Context context, String pac, String fileName) {
-        return new PdfReport(context, pac, fileName);
+    public static PdfReport init(Context context, String fileName) {
+        return new PdfReport(context, fileName);
     }
 
-    public static PdfReport init(Context context, String pac, String fileName, int borderColor) {
-        return new PdfReport(context, pac, fileName, borderColor);
+    public static PdfReport init(Context context, String fileName, int borderColor) {
+        return new PdfReport(context, fileName, borderColor);
     }
 
 
