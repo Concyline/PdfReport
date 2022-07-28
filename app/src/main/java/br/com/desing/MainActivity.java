@@ -175,7 +175,7 @@ public class MainActivity extends AppCompatActivity {
                         .headerImage("icon.jpg", Location.LEFT, Border.YES, matrizHeader) // ONLY LEFT OR RIGTH
                         .lineSeparator(3)
                         .header(matrizHeader)
-                        .table(columnWidths, arraySubtitle, arrayTabela)
+                        .table(columnWidths, arraySubtitle, arrayTabela, 6)
                         .totalizer(arrayTotalizer)
                         .create();
 

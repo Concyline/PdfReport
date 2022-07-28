@@ -55,6 +55,8 @@ public class PdfReport {
     private String fileName = "default";
     private int borderColor = 0xFF000000;
 
+    private int fontTable = 10;
+
     PdfReport(Context context) {
         this.context = context;
     }
@@ -103,7 +105,7 @@ public class PdfReport {
 
     private PdfPCell getCellHeaderTable(String descricao) {
 
-        Font font = new Font(Font.FontFamily.HELVETICA, 12, Font.NORMAL, new BaseColor(255, 255, 255));
+        Font font = new Font(Font.FontFamily.HELVETICA, fontTable, Font.NORMAL, new BaseColor(255, 255, 255));
 
         PdfPCell cell = new PdfPCell(new Phrase(descricao, font));
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -114,7 +116,10 @@ public class PdfReport {
     }
 
     private PdfPCell getCellLinhaTabela(String value, Location location) {
-        PdfPCell cell = new PdfPCell(new Phrase(value, NORMAL));
+
+        Font font = new Font(Font.FontFamily.HELVETICA, fontTable, Font.NORMAL);
+
+        PdfPCell cell = new PdfPCell(new Phrase(value, font));
         cell.setBackgroundColor(zebra ? new BaseColor(238, 238, 238) : new BaseColor(255, 255, 255));
         cell.setBorderColor(new BaseColor(102, 102, 102));
 
@@ -406,6 +411,12 @@ public class PdfReport {
 
         return pdfPTable;
 
+    }
+
+    public PdfReport table(float[] columnWidths, String[] arraySubtitle, ItemTable[][] matrizTable, int fontTable) throws Exception{
+        this.fontTable = fontTable;
+        lObject.add(setTableIntern(columnWidths, arraySubtitle, matrizTable));
+        return this;
     }
 
     public PdfReport table(float[] columnWidths, String[] arraySubtitle, ItemTable[][] matrizTable) throws Exception{
