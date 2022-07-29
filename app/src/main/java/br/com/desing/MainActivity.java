@@ -172,6 +172,7 @@ public class MainActivity extends AppCompatActivity {
                         .title("Curriculum Vitae", Location.CENTER, 18)
                         .lineSeparator()
                         .imageIn("icon.jpg", Location.CENTER)
+                        .spacing(20,20)
                         .lineSeparator(2)
                         .headerImage("icon.jpg", Location.LEFT, Border.YES, matrizHeader) // ONLY LEFT OR RIGTH
                         .lineSeparator(3)

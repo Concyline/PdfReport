@@ -20,7 +20,6 @@ import com.itextpdf.text.Image;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.Rectangle;
-import com.itextpdf.text.pdf.PRIndirectReference;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
@@ -57,6 +56,7 @@ public class PdfReport {
     private int borderColor = 0xFF000000;
 
     private int fontTable = 9; // DEFAULT
+    private int fontTitle = 18; // DEFAULT
 
     PdfReport(Context context) {
         this.context = context;
@@ -123,13 +123,13 @@ public class PdfReport {
         cell.setBackgroundColor(zebra ? new BaseColor(238, 238, 238) : new BaseColor(255, 255, 255));
         cell.setBorderColor(new BaseColor(102, 102, 102));
 
-        if(location.equals(Location.RIGTH)){
+        if (location.equals(Location.RIGTH)) {
             cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
 
-        }else if(location.equals(Location.CENTER)){
+        } else if (location.equals(Location.CENTER)) {
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
 
-        }else{
+        } else {
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
         }
 
@@ -149,49 +149,57 @@ public class PdfReport {
         return cell;
     }
 
-    public PdfReport title(String title, Location  location, int fontTitle) throws Exception{
+    public PdfReport title(String title, Location location, int fontTitle) throws Exception {
         this.fontTitle = fontTitle;
         lObject.add(titleIntern(title, location));
         return this;
     }
 
-    public PdfReport title(String title, Location  location) throws Exception{
+    public PdfReport title(String title, Location location) throws Exception {
         lObject.add(titleIntern(title, location));
         return this;
     }
 
-    private int fontTitle = 18; // DEFAULT
-
-    private Paragraph titleIntern(String title, Location  location) throws Exception{
+    private Paragraph titleIntern(String title, Location location) throws Exception {
 
         Font font = new Font(Font.FontFamily.HELVETICA, fontTitle, Font.NORMAL);
 
         Paragraph paragraph = new Paragraph(new Phrase(title, font));
 
-        if(location.equals(Location.RIGTH)){
+        if (location.equals(Location.RIGTH)) {
             paragraph.setAlignment(Element.ALIGN_RIGHT);
 
-        }else if(location.equals(Location.CENTER)){
+        } else if (location.equals(Location.CENTER)) {
             paragraph.setAlignment(Element.ALIGN_CENTER);
-            
-        }else{
+
+        } else {
             paragraph.setAlignment(Element.ALIGN_LEFT);
         }
 
         return paragraph;
     }
 
-    public PdfReport lineSeparator() throws Exception{
+    public PdfReport spacing(int top, int booton) throws Exception {
+        Paragraph paragraph = new Paragraph(new Phrase());
+
+        paragraph.setSpacingBefore(top);
+        paragraph.setSpacingAfter(booton);
+
+        lObject.add(paragraph);
+        return this;
+    }
+
+    public PdfReport lineSeparator() throws Exception {
         lObject.add(lineSeparatorIntern(0));
         return this;
     }
 
-    public PdfReport lineSeparator(int height) throws Exception{
+    public PdfReport lineSeparator(int height) throws Exception {
         lObject.add(lineSeparatorIntern(height));
         return this;
     }
 
-    private Chunk lineSeparatorIntern(int height) throws Exception{
+    private Chunk lineSeparatorIntern(int height) throws Exception {
 
         LineSeparator lineSeparator = new LineSeparator();
         lineSeparator.setLineColor(new BaseColor(borderColor));
@@ -280,7 +288,7 @@ public class PdfReport {
         return resizedBitmap;
     }
 
-    public PdfReport imageIn(String imageName, Location location) throws Exception{
+    public PdfReport imageIn(String imageName, Location location) throws Exception {
 
         float[] celLayout;
 
@@ -301,19 +309,19 @@ public class PdfReport {
         PdfPTable imageTopPdfPTable = new PdfPTable(celLayout);
         imageTopPdfPTable.getDefaultCell().setBorder(0);
 
-        for(int i = 0; i < 3; i++){
+        for (int i = 0; i < 3; i++) {
 
-            if(i == 0 && location.equals(Location.LEFT)){
+            if (i == 0 && location.equals(Location.LEFT)) {
                 imageTopPdfPTable.addCell(getImage(imageName));
                 continue;
             }
 
-            if(i == 1 && location.equals(Location.CENTER)){
+            if (i == 1 && location.equals(Location.CENTER)) {
                 imageTopPdfPTable.addCell(getImage(imageName));
                 continue;
             }
 
-            if(i == 2 && location.equals(Location.RIGTH)){
+            if (i == 2 && location.equals(Location.RIGTH)) {
                 imageTopPdfPTable.addCell(getImage(imageName));
                 continue;
             }
@@ -326,29 +334,29 @@ public class PdfReport {
         return this;
     }
 
-    public PdfReport headerImage(String imageName, ItemHeader[][] matrizHeader) throws Exception{
+    public PdfReport headerImage(String imageName, ItemHeader[][] matrizHeader) throws Exception {
         lObject.add(setHeaderImageIntern(imageName, Location.LEFT, Border.YES, matrizHeader));
         return this;
     }
 
-    public PdfReport headerImage(String imageName, Location location, ItemHeader[][] matrizHeader) throws Exception{
+    public PdfReport headerImage(String imageName, Location location, ItemHeader[][] matrizHeader) throws Exception {
         lObject.add(setHeaderImageIntern(imageName, location, Border.YES, matrizHeader));
         return this;
     }
 
-    public PdfReport headerImage(String imageName, Location location, Border border, ItemHeader[][] matrizHeader) throws Exception{
+    public PdfReport headerImage(String imageName, Location location, Border border, ItemHeader[][] matrizHeader) throws Exception {
         lObject.add(setHeaderImageIntern(imageName, location, border, matrizHeader));
         return this;
     }
 
-    public PdfReport headerImage(String imageName,  Border border, ItemHeader[][] matrizHeader) throws Exception{
+    public PdfReport headerImage(String imageName, Border border, ItemHeader[][] matrizHeader) throws Exception {
         lObject.add(setHeaderImageIntern(imageName, Location.LEFT, border, matrizHeader));
         return this;
     }
 
-    private PdfPTable setHeaderImageIntern(String imageName, Location location, Border border, ItemHeader[][] matrizHeader) throws Exception{
+    private PdfPTable setHeaderImageIntern(String imageName, Location location, Border border, ItemHeader[][] matrizHeader) throws Exception {
 
-        if(matrizHeader == null){
+        if (matrizHeader == null) {
             throw new Exception("itemCells is empty!");
         }
 
@@ -367,7 +375,7 @@ public class PdfReport {
         PdfPTable headerImagePdfPTable = new PdfPTable(celLayout);
         headerImagePdfPTable.getDefaultCell().setBorderColor(new BaseColor(borderColor));
 
-        if(border.equals(Border.NO)) {
+        if (border.equals(Border.NO)) {
             headerImagePdfPTable.getDefaultCell().setBorder(0);
         }
 
@@ -390,10 +398,10 @@ public class PdfReport {
 
         }
 
-        if(location.equals(Location.LEFT)){
+        if (location.equals(Location.LEFT)) {
             headerImagePdfPTable.addCell(getImage(imageName));
             headerImagePdfPTable.addCell(headerInterno);
-        }else{
+        } else {
             headerImagePdfPTable.addCell(headerInterno);
             headerImagePdfPTable.addCell(getImage(imageName));
         }
@@ -402,26 +410,26 @@ public class PdfReport {
 
     }
 
-    public PdfReport header(ItemHeader[][] matrizHeader) throws Exception{
+    public PdfReport header(ItemHeader[][] matrizHeader) throws Exception {
         lObject.add(setHeaderIntern(Border.YES, matrizHeader));
         return this;
     }
 
-    public PdfReport header(Border border, ItemHeader[][] matrizHeader) throws Exception{
+    public PdfReport header(Border border, ItemHeader[][] matrizHeader) throws Exception {
         lObject.add(setHeaderIntern(border, matrizHeader));
         return this;
     }
 
-    private PdfPTable setHeaderIntern(Border border, ItemHeader[][] matrizHeader) throws Exception{
+    private PdfPTable setHeaderIntern(Border border, ItemHeader[][] matrizHeader) throws Exception {
 
-        if(matrizHeader == null){
+        if (matrizHeader == null) {
             throw new Exception("itemCells is empty!");
         }
 
         PdfPTable pdfPTable = new PdfPTable(matrizHeader[0].length);
         pdfPTable.getDefaultCell().setBorderColor(new BaseColor(borderColor));
 
-        if(border.equals(Border.NO)) {
+        if (border.equals(Border.NO)) {
             pdfPTable.getDefaultCell().setBorder(0);
         }
 
@@ -446,28 +454,28 @@ public class PdfReport {
 
     }
 
-    public PdfReport table(float[] columnWidths, String[] arraySubtitle, ItemTable[][] matrizTable, int fontTable) throws Exception{
+    public PdfReport table(float[] columnWidths, String[] arraySubtitle, ItemTable[][] matrizTable, int fontTable) throws Exception {
         this.fontTable = fontTable;
         lObject.add(setTableIntern(columnWidths, arraySubtitle, matrizTable));
         return this;
     }
 
-    public PdfReport table(float[] columnWidths, String[] arraySubtitle, ItemTable[][] matrizTable) throws Exception{
+    public PdfReport table(float[] columnWidths, String[] arraySubtitle, ItemTable[][] matrizTable) throws Exception {
         lObject.add(setTableIntern(columnWidths, arraySubtitle, matrizTable));
         return this;
     }
 
-    private PdfPTable setTableIntern(float[] columnWidths, String[] arraySubtitle, ItemTable[][] matrizTable) throws Exception{
+    private PdfPTable setTableIntern(float[] columnWidths, String[] arraySubtitle, ItemTable[][] matrizTable) throws Exception {
 
-        if(columnWidths == null){
+        if (columnWidths == null) {
             throw new Exception("columnWidths is empty!");
         }
 
-        if(arraySubtitle == null){
+        if (arraySubtitle == null) {
             throw new Exception("arraySubtitle is empty!");
         }
 
-        if(matrizTable == null){
+        if (matrizTable == null) {
             throw new Exception("arrayTabela is empty!");
         }
 
@@ -499,29 +507,29 @@ public class PdfReport {
 
     }
 
-    public PdfReport totalizer(ItemTotalizer[] arrayTotalizer) throws Exception{
+    public PdfReport totalizer(ItemTotalizer[] arrayTotalizer) throws Exception {
         lObject.add(setTotalizerIntern(arrayTotalizer));
         return this;
     }
 
-    private PdfPTable setTotalizerIntern(ItemTotalizer[] arrayTotalizer) throws Exception{
+    private PdfPTable setTotalizerIntern(ItemTotalizer[] arrayTotalizer) throws Exception {
 
-        PdfPTable pdfPTable  = new PdfPTable(3);
-        
+        PdfPTable pdfPTable = new PdfPTable(3);
+
         pdfPTable.setWidthPercentage(100);
         pdfPTable.setSpacingBefore(10);
 
-        if(arrayTotalizer.length == 1){
+        if (arrayTotalizer.length == 1) {
             pdfPTable.addCell(getCellFooter("", ""));
             pdfPTable.addCell(getCellFooter("", ""));
             pdfPTable.addCell(getCellFooter(arrayTotalizer[0].getSubtitle(), arrayTotalizer[0].getTitle()));
 
-        }else if(arrayTotalizer.length == 2){
+        } else if (arrayTotalizer.length == 2) {
             pdfPTable.addCell(getCellFooter("", ""));
             pdfPTable.addCell(getCellFooter(arrayTotalizer[0].getSubtitle(), arrayTotalizer[0].getTitle()));
             pdfPTable.addCell(getCellFooter(arrayTotalizer[1].getSubtitle(), arrayTotalizer[1].getTitle()));
 
-        }else if(arrayTotalizer.length == 3){
+        } else if (arrayTotalizer.length == 3) {
             pdfPTable.addCell(getCellFooter(arrayTotalizer[0].getSubtitle(), arrayTotalizer[0].getTitle()));
             pdfPTable.addCell(getCellFooter(arrayTotalizer[1].getSubtitle(), arrayTotalizer[1].getTitle()));
             pdfPTable.addCell(getCellFooter(arrayTotalizer[2].getSubtitle(), arrayTotalizer[2].getTitle()));
@@ -564,7 +572,7 @@ public class PdfReport {
         Uri uri = null;
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            uri = FileProvider.getUriForFile(Objects.requireNonNull(context), context.getPackageName()+".provider", pdfFile);
+            uri = FileProvider.getUriForFile(Objects.requireNonNull(context), context.getPackageName() + ".provider", pdfFile);
 
             intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
@@ -586,7 +594,7 @@ public class PdfReport {
         Uri uri = null;
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            uri = FileProvider.getUriForFile(Objects.requireNonNull(context), context.getPackageName()+".provider", pdfFile);
+            uri = FileProvider.getUriForFile(Objects.requireNonNull(context), context.getPackageName() + ".provider", pdfFile);
 
             intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
@@ -610,7 +618,6 @@ public class PdfReport {
     public static PdfReport init(Context context, String fileName, int borderColor) {
         return new PdfReport(context, fileName, borderColor);
     }
-
 
 
 }
