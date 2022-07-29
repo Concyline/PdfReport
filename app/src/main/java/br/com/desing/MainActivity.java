@@ -169,6 +169,7 @@ public class MainActivity extends AppCompatActivity {
                 arrayTotalizer[1] = new ItemTotalizer("Toal de valor", "5000,00");
 
                 PdfReport report = PdfReport.init(MainActivity.this, "android", Color.BLACK)
+                        .title("Curriculum Vitae", Location.CENTER, 18)
                         .lineSeparator()
                         .imageIn("icon.jpg", Location.CENTER)
                         .lineSeparator(2)

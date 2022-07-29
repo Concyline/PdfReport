@@ -20,6 +20,7 @@ import com.itextpdf.text.Image;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.pdf.PRIndirectReference;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
@@ -55,7 +56,7 @@ public class PdfReport {
     private String fileName = "default";
     private int borderColor = 0xFF000000;
 
-    private int fontTable = 10;
+    private int fontTable = 9; // DEFAULT
 
     PdfReport(Context context) {
         this.context = context;
@@ -71,7 +72,6 @@ public class PdfReport {
         this.fileName = fileName;
         this.borderColor = borderColor;
     }
-
 
     public PdfReport create() throws Exception {
 
@@ -149,10 +149,43 @@ public class PdfReport {
         return cell;
     }
 
+    public PdfReport title(String title, Location  location, int fontTitle) throws Exception{
+        this.fontTitle = fontTitle;
+        lObject.add(titleIntern(title, location));
+        return this;
+    }
+
+    public PdfReport title(String title, Location  location) throws Exception{
+        lObject.add(titleIntern(title, location));
+        return this;
+    }
+
+    private int fontTitle = 18; // DEFAULT
+
+    private Paragraph titleIntern(String title, Location  location) throws Exception{
+
+        Font font = new Font(Font.FontFamily.HELVETICA, fontTitle, Font.NORMAL);
+
+        Paragraph paragraph = new Paragraph(new Phrase(title, font));
+
+        if(location.equals(Location.RIGTH)){
+            paragraph.setAlignment(Element.ALIGN_RIGHT);
+
+        }else if(location.equals(Location.CENTER)){
+            paragraph.setAlignment(Element.ALIGN_CENTER);
+            
+        }else{
+            paragraph.setAlignment(Element.ALIGN_LEFT);
+        }
+
+        return paragraph;
+    }
+
     public PdfReport lineSeparator() throws Exception{
         lObject.add(lineSeparatorIntern(0));
         return this;
     }
+
     public PdfReport lineSeparator(int height) throws Exception{
         lObject.add(lineSeparatorIntern(height));
         return this;
