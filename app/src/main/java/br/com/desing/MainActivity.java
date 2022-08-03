@@ -41,18 +41,18 @@ public class MainActivity extends AppCompatActivity {
     public void checkExternalStorageManager() {
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
-            validaPermisoes();
+            checkPremissions();
             return;
         }
 
         if (Environment.isExternalStorageManager()) {
-            validaPermisoes();
+            checkPremissions();
             return;
         }
 
         new AlertDialog.Builder(MainActivity.this)
-                .setTitle("Atenção")
-                .setMessage("Dar permissão de acesso aos arquivos!")
+                .setTitle("Attention")
+                .setMessage("Give permission to access files!")
                 .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
 
@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             if (Environment.isExternalStorageManager()) {
-                validaPermisoes();
+                checkPremissions();
             } else {
                 checkExternalStorageManager();
             }
@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
 
     });
 
-    private void validaPermisoes() {
+    private void checkPremissions() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
             return;
@@ -101,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     setListeners();
                 } else {
-                    validaPermisoes();
+                    checkPremissions();
                 }
                 return;
             }
@@ -112,14 +112,14 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new Task().execute("VER");
+                new Task().execute("LOOK");
             }
         });
 
         findViewById(R.id.button2).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new Task().execute("ENVIAR");
+                new Task().execute("SEND");
             }
         });
     }
@@ -132,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
         protected void onPreExecute() {
             super.onPreExecute();
 
-            progressDialog = ProgressDialog.show(MainActivity.this, "Aguarde.", "Processando..!", true);
+            progressDialog = ProgressDialog.show(MainActivity.this, "Wharning", "processing..!", true);
         }
 
         @Override
@@ -144,32 +144,37 @@ public class MainActivity extends AppCompatActivity {
                 int coluna = 3;
 
                 ItemHeader[][] matrizHeader = new ItemHeader[linha][coluna];
-                matrizHeader[0][0] = new ItemHeader("Razão social", "Siac Sistemas LTDA");
-                matrizHeader[0][1] = new ItemHeader("Nome Fantasia", "Siac Sistemas");
-                matrizHeader[0][2] = new ItemHeader("Simples nacional", "S");
+                matrizHeader[0][0] = new ItemHeader("Name", "Aureo");
+                matrizHeader[0][1] = new ItemHeader("Last Name", "Jose");
+                matrizHeader[0][2] = new ItemHeader("Surname", "Programing");
 
-                matrizHeader[1][0] = new ItemHeader("CNPJ", "01.000.258/0001-89");
-                matrizHeader[1][1] = new ItemHeader("Insc Estadual", "00.526-89");
+                matrizHeader[1][0] = new ItemHeader("IMP", "00.000.000/0000-00");
+                matrizHeader[1][1] = new ItemHeader("INSC", "00.526-89");
                 matrizHeader[1][2] = new ItemHeader("NIT", "00.52-0002-8574");
 
                 float[] columnWidths = {0.2f, 1f, 1f};
-                String[] arraySubtitle = new String[]{"ID", "NOME", "SOBRENOME"};
+                String[] arraySubtitle = new String[]{"ID", "NAME", "LAST NAME"};
 
-                ItemTable[][] arrayTabela = new ItemTable[2][3];
-                arrayTabela[0][0] = new ItemTable("1", Location.CENTER);
-                arrayTabela[0][1] = new ItemTable("Aureo");
-                arrayTabela[0][2] = new ItemTable("Jose");
+                int linhas = 100;
+                ItemTable[][] matrizTable = new ItemTable[linhas][3];
 
-                arrayTabela[1][0] = new ItemTable("2", Location.CENTER);
-                arrayTabela[1][1] = new ItemTable("Davi");
-                arrayTabela[1][2] = new ItemTable("Martins");
+                for(int i = 0; i < linhas; i++){
+
+                    matrizTable[i][0] = new ItemTable(String.valueOf(i), Location.CENTER);
+                    matrizTable[i][1] = new ItemTable("Aureo "+i);
+                    matrizTable[i][2] = new ItemTable("Jose ");
+
+                }
+
 
                 ItemTotalizer[] arrayTotalizer = new ItemTotalizer[2];
                 arrayTotalizer[0] = new ItemTotalizer("Toal de itens", "3");
                 arrayTotalizer[1] = new ItemTotalizer("Toal de valor", "5000,00");
 
+                String[] arrayData = new String[]{"C","A","B"};
+
                 PdfReport report = PdfReport.init(MainActivity.this, "android", Color.BLACK)
-                        .title("Curriculum Vitae", Location.CENTER, 18)
+                        .title("Title of relatory", Location.CENTER, 18)
                         .lineSeparator()
                         .imageIn("icon.jpg", Location.CENTER)
                         .spacing(20,20)
@@ -177,31 +182,19 @@ public class MainActivity extends AppCompatActivity {
                         .headerImage("icon.jpg", Location.LEFT, Border.YES, matrizHeader) // ONLY LEFT OR RIGTH
                         .lineSeparator(3)
                         .header(matrizHeader)
-                        .table(columnWidths, arraySubtitle, arrayTabela, 6)
+                        .table(columnWidths, arraySubtitle, matrizTable, 6)
+                        .list(true, false, arrayData)
                         .totalizer(arrayTotalizer)
                         .create();
 
-                if(strings.length > 0 && strings[0].equals("VER")){
+                if(strings.length > 0 && strings[0].equals("LOOK")){
                     report.previewPdf();
                 }else{
                     report.sendPdf();
                 }
 
-
             } catch (Exception e) {
                 e.printStackTrace();
-
-                new AlertDialog.Builder(MainActivity.this)
-                        .setTitle("Atenção")
-                        .setMessage(e.getMessage())
-                        .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-
-                            }
-                        })
-                        .setIcon(R.drawable.round_folder_open_24
-                        )
-                        .show();
             } finally {
                 return null;
             }

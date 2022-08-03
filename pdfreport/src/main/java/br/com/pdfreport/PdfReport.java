@@ -20,8 +20,10 @@ import com.itextpdf.text.Image;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.pdf.ColumnText;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfPageEventHelper;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.draw.LineSeparator;
 
@@ -43,7 +45,7 @@ import br.com.pdfreport.enuns.Location;
 public class PdfReport {
 
     private Font BOLD_UNDERLINED = new Font(Font.FontFamily.HELVETICA, 10, Font.BOLD, new BaseColor(85, 85, 85));
-    private Font NORMAL = new Font(Font.FontFamily.HELVETICA, 10, Font.NORMAL);
+    private Font FONT_NUMBER_PAGE = new Font(Font.FontFamily.HELVETICA, 10, Font.NORMAL, new BaseColor(102, 102, 102));
     private Font CUSTON_COLOR = new Font(Font.FontFamily.HELVETICA, 10, Font.ITALIC, new BaseColor(0, 109, 217));
     private Font CUSTON_COLOR_VALOR = new Font(Font.FontFamily.HELVETICA, 22, Font.ITALIC, new BaseColor(0, 109, 217));
 
@@ -79,9 +81,13 @@ public class PdfReport {
 
         OutputStream output = new FileOutputStream(pdfFile);
         Document document = new Document();
-        PdfWriter.getInstance(document, output);
-        document.open();
 
+        PdfWriter writer = PdfWriter.getInstance(document, output);
+
+        PdfHeader event = new PdfHeader();
+        writer.setPageEvent(event);
+
+        document.open();
 
         for (Object o : lObject) {
             document.add((Element) o);
@@ -90,6 +96,22 @@ public class PdfReport {
         document.close();
 
         return this;
+    }
+
+    public class PdfHeader extends PdfPageEventHelper {
+
+        @Override
+        public void onEndPage(PdfWriter writer, Document document) {
+            Rectangle pageSize = document.getPageSize();
+
+            ColumnText.showTextAligned(writer.getDirectContent(),
+                    Element.ALIGN_BOTTOM,
+                    new Phrase(String.valueOf(writer.getCurrentPageNumber()), FONT_NUMBER_PAGE),
+                    pageSize.getRight(35), pageSize.getBottom(30),
+                    0);
+
+            zebra = false;
+        }
     }
 
     private PdfPCell getCellHeader(String legenda, String valor) {
@@ -357,7 +379,7 @@ public class PdfReport {
     private PdfPTable setHeaderImageIntern(String imageName, Location location, Border border, ItemHeader[][] matrizHeader) throws Exception {
 
         if (matrizHeader == null) {
-            throw new Exception("itemCells is empty!");
+            throw new Exception("itemCells is null!");
         }
 
         float[] celLayout;
@@ -423,7 +445,7 @@ public class PdfReport {
     private PdfPTable setHeaderIntern(Border border, ItemHeader[][] matrizHeader) throws Exception {
 
         if (matrizHeader == null) {
-            throw new Exception("itemCells is empty!");
+            throw new Exception("itemCells is null!");
         }
 
         PdfPTable pdfPTable = new PdfPTable(matrizHeader[0].length);
@@ -468,15 +490,15 @@ public class PdfReport {
     private PdfPTable setTableIntern(float[] columnWidths, String[] arraySubtitle, ItemTable[][] matrizTable) throws Exception {
 
         if (columnWidths == null) {
-            throw new Exception("columnWidths is empty!");
+            throw new Exception("columnWidths is null!");
         }
 
         if (arraySubtitle == null) {
-            throw new Exception("arraySubtitle is empty!");
+            throw new Exception("arraySubtitle is null!");
         }
 
         if (matrizTable == null) {
-            throw new Exception("arrayTabela is empty!");
+            throw new Exception("arrayTabela is null!");
         }
 
         PdfPTable pdfPTable = new PdfPTable(columnWidths);
@@ -484,6 +506,8 @@ public class PdfReport {
         pdfPTable.setWidthPercentage(100);
         pdfPTable.setSpacingBefore(10);
         pdfPTable.setSpacingAfter(10);
+        pdfPTable.setHeaderRows(1);
+        pdfPTable.setSkipFirstHeader(false);
 
         for (String subtitle : arraySubtitle) {
             pdfPTable.addCell(getCellHeaderTable(subtitle));
@@ -505,6 +529,31 @@ public class PdfReport {
 
         return pdfPTable;
 
+    }
+
+    public PdfReport list(String[] arraryData) throws Exception {
+        lObject.add(listIntern(false, false, arraryData));
+        return this;
+    }
+
+    public PdfReport list(boolean numered, boolean lettered, String[] arraryData) throws Exception {
+        lObject.add(listIntern(numered, lettered, arraryData));
+        return this;
+    }
+
+    public com.itextpdf.text.List listIntern(boolean numered, boolean lettered, String[] arraryData) throws Exception {
+
+        com.itextpdf.text.List list = new com.itextpdf.text.List(false, false);
+
+        if (arraryData == null) {
+            throw new Exception("arraryData is null");
+        }
+
+        for (String data : arraryData) {
+            list.add(data);
+        }
+
+        return list;
     }
 
     public PdfReport totalizer(ItemTotalizer[] arrayTotalizer) throws Exception {
