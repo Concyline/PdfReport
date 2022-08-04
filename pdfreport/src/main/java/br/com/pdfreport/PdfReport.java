@@ -214,6 +214,15 @@ public class PdfReport {
 
         return paragraph;
     }
+    public PdfReport spacing(int all) throws Exception {
+        Paragraph paragraph = new Paragraph(new Phrase());
+
+        paragraph.setSpacingBefore(all);
+        paragraph.setSpacingAfter(all);
+
+        lObject.add(paragraph);
+        return this;
+    }
 
     public PdfReport spacing(int top, int booton) throws Exception {
         Paragraph paragraph = new Paragraph(new Phrase());
