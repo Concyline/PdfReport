@@ -55,6 +55,7 @@ public class PdfReport {
     private File pdfFile;
     private boolean zebra = false;
     private String fileName = "default";
+    private String folderName = "Documents";
     private int borderColor = 0xFF000000;
 
     private int fontTable = 9; // DEFAULT
@@ -71,6 +72,13 @@ public class PdfReport {
 
     PdfReport(Context context, String fileName, int borderColor) {
         this.context = context;
+        this.fileName = fileName;
+        this.borderColor = borderColor;
+    }
+
+    PdfReport(Context context, String folderName, String fileName, int borderColor) {
+        this.context = context;
+        this.folderName = folderName;
         this.fileName = fileName;
         this.borderColor = borderColor;
     }
@@ -588,12 +596,12 @@ public class PdfReport {
 
     }
 
-
     public File createFile() throws Exception {
 
         String nomePdf = fileName + ".pdf";
 
-        File folder = new File(Environment.getExternalStorageDirectory() + "/Documents");
+        File folder = new File(Environment.getExternalStorageDirectory() + (folderName.substring(0,1).equals("/") ? folderName : "/"+folderName));
+
         if (!folder.exists()) {
             folder.mkdir();
         }
@@ -666,6 +674,10 @@ public class PdfReport {
 
     public static PdfReport init(Context context, String fileName, int borderColor) {
         return new PdfReport(context, fileName, borderColor);
+    }
+
+    public static PdfReport init(Context context, String folderName, String fileName, int borderColor) {
+        return new PdfReport(context, folderName, fileName, borderColor);
     }
 
 

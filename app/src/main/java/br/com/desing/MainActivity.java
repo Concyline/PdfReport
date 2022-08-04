@@ -173,7 +173,7 @@ public class MainActivity extends AppCompatActivity {
 
                 String[] arrayData = new String[]{"C","A","B"};
 
-                PdfReport report = PdfReport.init(MainActivity.this, "android", Color.BLACK)
+                PdfReport report = PdfReport.init(MainActivity.this, "And","android", Color.BLACK)
                         .title("Title of relatory", Location.CENTER, 18)
                         .lineSeparator()
                         .imageIn("icon.jpg", Location.CENTER)
