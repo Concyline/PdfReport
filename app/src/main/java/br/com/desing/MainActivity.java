@@ -177,6 +177,7 @@ public class MainActivity extends AppCompatActivity {
                         .title("Title of relatory", Location.CENTER, 18)
                         .lineSeparator()
                         .imageIn("icon.jpg", Location.CENTER)
+                        .imageIn(R.raw.image, Location.RIGTH)
                         .spacing(20,20)
                         .lineSeparator(2)
                         .headerImage("icon.jpg", Location.LEFT, Border.YES, matrizHeader) // ONLY LEFT OR RIGTH

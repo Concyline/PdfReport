@@ -246,12 +246,19 @@ public class PdfReport {
     }
 
 
+    private Image getImage(int id) throws Exception {
+        InputStream inputStream = context.getResources().openRawResource(id);
+        return getImage(inputStream);
+    }
+
     private Image getImage(String imageName) throws Exception {
-
         InputStream inputStream = context.getAssets().open(imageName);
-        Bitmap bmp = BitmapFactory.decodeStream(inputStream);
+        return getImage(inputStream);
+    }
 
-        //bmp = resizeBitmap(bmp, 100);
+
+    private Image getImage(InputStream inputStream) throws Exception {
+        Bitmap bmp = BitmapFactory.decodeStream(inputStream);
 
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         bmp.compress(Bitmap.CompressFormat.PNG, 100, stream);
@@ -259,72 +266,18 @@ public class PdfReport {
         Image image = Image.getInstance(stream.toByteArray());
         image.setAlignment(Image.RIGHT);
         return image;
-
     }
 
-    public static Bitmap resizeBitmap(Bitmap source, int maxLength) {
-        try {
-            if (source.getHeight() >= source.getWidth()) {
-                int targetHeight = maxLength;
-                if (source.getHeight() <= targetHeight) { // if image already smaller than the required height
-                    return source;
-                }
-
-                double aspectRatio = (double) source.getWidth() / (double) source.getHeight();
-                int targetWidth = (int) (targetHeight * aspectRatio);
-
-                Bitmap result = Bitmap.createScaledBitmap(source, targetWidth, targetHeight, false);
-                return result;
-            } else {
-                int targetWidth = maxLength;
-
-                if (source.getWidth() <= targetWidth) { // if image already smaller than the required height
-                    return source;
-                }
-
-                double aspectRatio = ((double) source.getHeight()) / ((double) source.getWidth());
-                int targetHeight = (int) (targetWidth * aspectRatio);
-
-                Bitmap result = Bitmap.createScaledBitmap(source, targetWidth, targetHeight, false);
-                return result;
-
-            }
-        } catch (Exception e) {
-            return source;
-        }
+    public PdfReport imageIn(int id, Location location) throws Exception {
+        lObject.add(imageInIntern("", id, location));
+        return this;
     }
-
-    private Bitmap resizeImage(Bitmap bitmap, int newSize) {
-        int width = bitmap.getWidth();
-        int height = bitmap.getHeight();
-
-        int newWidth = 0;
-        int newHeight = 0;
-
-        if (width > height) {
-            newWidth = newSize;
-            newHeight = (newSize * height) / width;
-        } else if (width < height) {
-            newHeight = newSize;
-            newWidth = (newSize * width) / height;
-        } else if (width == height) {
-            newHeight = newSize;
-            newWidth = newSize;
-        }
-
-        float scaleWidth = ((float) newWidth) / width;
-        float scaleHeight = ((float) newHeight) / height;
-
-        Matrix matrix = new Matrix();
-        matrix.postScale(scaleWidth, scaleHeight);
-
-        Bitmap resizedBitmap = Bitmap.createBitmap(bitmap, 0, 0,
-                width, height, matrix, true);
-
-        return resizedBitmap;
-    }
-
     public PdfReport imageIn(String imageName, Location location) throws Exception {
+        lObject.add(imageInIntern(imageName, -1, location));
+        return this;
+    }
+
+    public PdfPTable imageInIntern(String imageName, int id, Location location) throws Exception {
 
         float[] celLayout;
 
@@ -348,26 +301,42 @@ public class PdfReport {
         for (int i = 0; i < 3; i++) {
 
             if (i == 0 && location.equals(Location.LEFT)) {
-                imageTopPdfPTable.addCell(getImage(imageName));
+
+                if(imageName.equals("") ){
+                    imageTopPdfPTable.addCell(getImage(id));
+                }else{
+                    imageTopPdfPTable.addCell(getImage(imageName));
+                }
+
                 continue;
             }
 
             if (i == 1 && location.equals(Location.CENTER)) {
-                imageTopPdfPTable.addCell(getImage(imageName));
+
+                if(imageName.equals("") ){
+                    imageTopPdfPTable.addCell(getImage(id));
+                }else{
+                    imageTopPdfPTable.addCell(getImage(imageName));
+                }
+
                 continue;
             }
 
             if (i == 2 && location.equals(Location.RIGTH)) {
-                imageTopPdfPTable.addCell(getImage(imageName));
+
+                if(imageName.equals("") ){
+                    imageTopPdfPTable.addCell(getImage(id));
+                }else{
+                    imageTopPdfPTable.addCell(getImage(imageName));
+                }
+
                 continue;
             }
 
             imageTopPdfPTable.addCell("");
         }
 
-
-        lObject.add(imageTopPdfPTable);
-        return this;
+        return imageTopPdfPTable;
     }
 
     public PdfReport headerImage(String imageName, ItemHeader[][] matrizHeader) throws Exception {
