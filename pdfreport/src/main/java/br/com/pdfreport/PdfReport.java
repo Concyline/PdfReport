@@ -70,6 +70,12 @@ public class PdfReport {
         this.fileName = fileName;
     }
 
+    PdfReport(Context context, String folderName, String fileName) {
+        this.context = context;
+        this.folderName = folderName;
+        this.fileName = fileName;
+    }
+
     PdfReport(Context context, String fileName, int borderColor) {
         this.context = context;
         this.fileName = fileName;
@@ -670,6 +676,10 @@ public class PdfReport {
 
     public static PdfReport init(Context context, String fileName) {
         return new PdfReport(context, fileName);
+    }
+
+    public static PdfReport init(Context context, String folderName, String fileName) {
+        return new PdfReport(context, folderName, fileName);
     }
 
     public static PdfReport init(Context context, String fileName, int borderColor) {
