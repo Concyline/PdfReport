@@ -604,7 +604,7 @@ public class PdfReport {
 
     public File createFile() throws Exception {
 
-        String nomePdf = fileName + ".pdf";
+        String nomePdf = fileName.contains(".pdf") ? fileName : fileName+ ".pdf";
 
         File folder = new File(Environment.getExternalStorageDirectory() + (folderName.substring(0,1).equals("/") ? folderName : "/"+folderName));
 
